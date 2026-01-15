@@ -170,6 +170,99 @@ To automate this, Spinnaker acts as the "orchestrator" that pulls your code from
 * This stops the pipeline and allows you to read the Terraform Plan output. You must click "Continue" to proceed.
 
 
+
+
+Step 5: Add Terraform Stage
+
+This stage will run your Terraform automation (SSD namespace + Helm deployment).
+
+Click Add Stage → Terraform (or Run Script if Terraform plugin not available)
+
+Fill details:
+
+Stage Name: Terraform Apply SSD
+
+Module Source: Git URL of your repo (https://gitlab.com/<org>/terraform-demo.git)
+
+Directory: / (root module)
+
+Terraform Version: 1.5.0
+
+Apply Variables:
+
+ssd_namespace = "ssd-terraform"
+release_name  = "opsmx-ssd-terraform"
+values_file   = "/path/to/enterprise-ssd/charts/ssd/ssd-minimal-values.yaml"
+
+
+Auto-Approve: true
+
+This stage will create the namespace and deploy the SSD Helm release automatically.
+
+Step 6: Add Artifact Stage (Optional Frontend)
+
+If you want to deploy your frontend app:
+
+Click Add Stage → Deploy (Manifest)
+
+Configure Expected Artifact:
+
+Account: opsmx_gitlab_artifact
+
+File Path: manifests/frontend.yaml
+
+Display Name: Frontend Manifest
+
+If Missing: Use default artifact
+
+Set Namespace: ssd-terraform
+
+This stage deploys the frontend app after the SSD stage is done.
+
+Step 7: (Optional) Add Manual Judgment / Policy Stage
+
+If you want a review/approval step:
+
+Add stage → Manual Judgment
+
+Instructions: Review Terraform plan and SSD deployment
+
+Assign approvers: team emails
+
+Useful for production pipelines.
+
+Step 8: Save and Run Pipeline
+
+Click Save Pipeline
+
+Trigger manually or push a change to Git to see it run automatically.
+
+Step 9: Verify Deployment
+
+After the pipeline completes:
+
+kubectl get ns
+kubectl get pods -n ssd-terraform
+helm list -n ssd-terraform
+kubectl get svc -n ssd-terraform
+
+
+✅ You should see:
+
+ssd-terraform namespace exists
+
+OpsMx SSD Helm release deployed
+
+Frontend service running
+
+Step 10: Next Optional Enhancements
+
+Add Rollback Stage if Terraform fails
+
+Add Notifications (Slack, Email)
+
+Add Automated Verification using kubectl or Helm commands as a Spinnaker stage
+
 4. **Stage 4: Terraform Apply**
 * **Type:** `Terraform`
 * **Action:** `Apply`
