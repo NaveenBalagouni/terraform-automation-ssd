@@ -482,6 +482,29 @@ You now have a **Spinnaker pipeline** that:
 3. Onboards the cluster to DemoSpinnaker.
 4. Validates the setup with optional smoke tests.
 
+
+
+Perfect! Here’s a **complete, clear naming scheme for all stages** in your Spinnaker pipeline, aligned with the flow we discussed:
+
+| **Stage #** | **Stage Name**                   | **Purpose / Notes**                                       | **Spinnaker Stage Type**              |
+| ----------- | -------------------------------- | --------------------------------------------------------- | ------------------------------------- |
+| 1           | **Terraform SSD Provisioning**   | Provision SSD instance(s) using Terraform                 | Run Job / Script / Terraform Bake     |
+| 2           | **Wait / Instance Verification** | Ensure SSD instance is running before onboarding          | Wait / Manual Judgment / Script       |
+| 3           | **SaaS Profile Configuration**   | Configure SaaS profile on the provisioned instance(s)     | Run Job / Script                      |
+| 4           | **Cluster Onboarding**           | Register instance/cluster in DemoSpinnaker environment    | Script / Kubernetes / Webhook         |
+| 5           | **Validation / Smoke Test**      | Confirm deployment works; run health checks or sample app | Script / Manual Judgment              |
+| 6           | **Notifications**                | Alert team on pipeline success or failure                 | Notifications (Slack, Email, Webhook) |
+
+✅ Notes:
+
+* These names are **descriptive and demo-friendly**, so anyone looking at the pipeline immediately knows what each stage does.
+* You can also **add parameters** in stage names, like `<Region>` or `<Instance Name>`, if you want it dynamic in runtime.
+
+If you like, I can now **draw a full visual diagram** using these exact stage names with arrows showing the flow—it’ll look like a polished pipeline chart ready for presentation.
+
+Do you want me to make that diagram next?
+
+
 ---
 
 I can also **draw a visual diagram of this pipeline** with all stages and flow arrows — makes it much easier to present in a demo.
