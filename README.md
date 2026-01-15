@@ -269,3 +269,46 @@ Add Automated Verification using kubectl or Helm commands as a Spinnaker stage
 * **Main Artifact:** Your Git repo artifact.
 * **Terraform Artifacts:** Select the `planfile` artifact produced in Stage 2.
 
+tep 2: Create the Pipeline
+
+    Configuration Stage:
+
+        Set up an Artifact Trigger: The pipeline starts whenever a new tag is pushed to the enterprise-ssd repo.
+
+        Define two Expected Artifacts:
+
+            The Helm Chart (Git Repo).
+
+            The values.yaml file.
+
+    Bake (Manifest) Stage:
+
+        Render Engine: Select Helm3.
+
+        Name: opsmx-ssd-deployment.
+
+        Namespace: ssd-terraform.
+
+        Input Artifact: Select your cloned Git repo.
+
+        Overrides: Point to your ssd-minimal-values.yaml.
+
+        This stage "renders" the Helm chart into a standard Kubernetes YAML manifest.
+
+    Deploy (Manifest) Stage:
+
+        Account: Select your K8s cluster.
+
+        Manifest Source: Select the output from the "Bake" stage.
+
+        Namespace: ssd-terraform (Spinnaker will create this if configured, or use a "Produce Output" stage).
+
+Step 3: Execution
+
+    When you push code to GitHub, Spinnaker detects it.
+
+    It downloads the Helm chart.
+
+    It injects the values.yaml.
+
+    It runs kubectl apply logic and monitors the rollout.
